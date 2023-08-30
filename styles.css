@@ -1,0 +1,131 @@
+*{
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-family: 'Merriweather', serif;
+}
+
+body{
+   position: relative;
+   overflow: hidden;
+   background-color: rgb(85, 28, 28);
+   /* background-image: url(bgImg.jpeg); */
+}
+
+header{
+    text-align: center;
+    padding: 20px;
+}
+
+main > .task-container{
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
+main .material-symbols-outlined{
+    cursor: pointer;
+}
+
+.task-container > *{
+    position: relative;
+    width: 25vw;
+    max-height: 80vh;
+    background-color: rgb(20, 20, 20);
+    padding: 0 12px;
+    border-radius: 10px;
+
+}
+
+.task-container .heading-container{
+    display: flex;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    width: 25%;
+    z-index: 9;
+    padding: 10px 0px;
+    padding-top: 22px;
+    background-color: rgb(20, 20, 20);
+}
+
+.task-container .card-container{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    max-height: 50vh;
+    padding-right: 10px;
+    overflow: scroll;
+}
+
+.task-container .card-details{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(47, 47, 47);
+    padding:10px;
+    border-radius: 10px;
+    width: 90%;
+    align-self: center;
+    margin: 7px 0px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add-card-container{
+    margin: 12px 0px;
+}
+
+.task-container .card-details:hover{
+    transform: scale(1.03);
+}
+
+.task-container .add-a-card-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px 0px;
+    cursor: pointer;
+}
+
+.task-container .add-a-card-btn:hover{
+    background-color: rgb(54, 58, 56);
+}
+
+.task-container .heading-container > .heading-name{
+    font-weight: 600;
+}
+
+.card-title-container{
+    display: none;
+}
+
+.card-title{
+    width: 98%;
+    height: 60px;
+    background-color: rgb(47, 47, 47);
+    outline: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 5px;
+}
+
+.card-title-container > .add-rmv-container{
+    display: flex;
+    text-align: center;
+    padding: 10px 0px;
+}
+
+.add-rmv-container .add-card-btn{
+    padding: 10px;
+    background-color: #579dff;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.cancel-btn{
+    align-self: center;
+    padding: 5px;
+}
