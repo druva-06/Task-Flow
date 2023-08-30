@@ -6,6 +6,12 @@ const cardTitles = document.getElementsByClassName('card-title');
 const cancelBtn = document.getElementsByClassName('cancel-btn');
 const cardContainers = document.getElementsByClassName('card-container');
 const taskContainers = document.getElementsByClassName('assignment')
+const taskPanelBackground = document.getElementsByClassName('task-panel-background')[0]
+const taskPanel = document.getElementsByClassName('task-panel')[0]
+const taskPanelcancelBtn = document.getElementsByClassName('task-panel-cancel-btn')[0]
+const taskPanelTitle = document.getElementsByClassName('task-panel-title')[0]
+const taskPanelDescription = document.getElementsByClassName('task-panel-description')[0]
+const taskPanelSaveBtn = document.getElementsByClassName('task-panel-save-btn')[0]
 
 /* Store the unique tokens */
 const tokenList = new Set(); /* DB Related */
@@ -13,6 +19,9 @@ const tokenList = new Set(); /* DB Related */
 const taskObjList = [] /* DB Related */
 /* Type of Tasks */
 const taskTypes = ['todo','doing','done']
+
+/* current task id */
+let currTaskId; 
 
 /* Generate the token with size sz */
 function generateToken(sz){
@@ -38,7 +47,8 @@ function createTaskObj(token,title,type){
     return {
         'token': token,
         'title': title,
-        'taskType': taskTypes[type]
+        'taskType': taskTypes[type],
+        'description': ''
     }
 }
 
@@ -86,6 +96,57 @@ function dragableForTask(taskEle){
     })
 }
 
+/* Get Title By using Id */
+function getTitleById(token){
+    for(let i = 0; i < taskObjList.length; i++){
+        if(taskObjList[i]['token']===token){
+            return taskObjList[i]['title'];
+        }
+    }
+}
+
+/* Get Descrpition By using Id */
+function getDescrpitionById(token){
+    for(let i = 0; i < taskObjList.length; i++){
+        if(taskObjList[i]['token']===token){
+            return taskObjList[i]['description'];
+        }
+    }
+}
+
+/* Update Title By using Id */
+function updateTitleById(token,title){
+    for(let i = 0; i < taskObjList.length; i++){
+        if(taskObjList[i]['token'] == token){
+            taskObjList[i]['title'] = title;
+            break;
+        }
+    }
+}
+
+/* Update Description By using Id */
+function updateDescriptionById(token,description){
+    for(let i = 0; i < taskObjList.length; i++){
+        if(taskObjList[i]['token'] == token){
+            taskObjList[i]['description'] = description;
+            break;
+        }
+    }
+}
+
+
+/* Card Click Event */
+function onCardClickEvent(taskEle){
+    taskEle.addEventListener('click', (event) => {
+        taskPanelBackground.style.display = 'flex';
+        currTaskId = taskEle.id;
+        let title = getTitleById(currTaskId);
+        let description = getDescrpitionById(currTaskId);
+        taskPanelTitle.value = title;
+        taskPanelDescription.value = description;
+    })
+}
+
 /* Event listeners for the todo, doing and done */
 for(let i = 0; i < 3; i++){
     /* Hide the Add a Card btn and show the textarea */
@@ -98,7 +159,8 @@ for(let i = 0; i < 3; i++){
         const title = cardTitles[i].value.trim();
         if(title!=='' && title!=undefined){
             taskEle = createCard(title,i);
-            dragableForTask(taskEle,i)
+            dragableForTask(taskEle)
+            onCardClickEvent(taskEle)
             cardContainers[i].appendChild(taskEle);
         }
         cardTitles[i].value = '';
@@ -123,3 +185,29 @@ for(let i = 0; i < 3; i++){
     })
 }
 
+/* Task panel Background click Event */
+taskPanelBackground.addEventListener('click',(event) => {
+    taskPanelBackground.style.display = 'none';
+})
+
+/* Task panel cancel btn click Event */
+taskPanelcancelBtn.addEventListener('click',(event) => {
+    taskPanelBackground.style.display = 'none';
+})
+
+/* Task panel click Event */
+taskPanel.addEventListener('click',(event) => {
+    event.stopPropagation();
+})
+
+/* Task panel save Btn */
+taskPanelSaveBtn.addEventListener('click',(event) => {
+    let title = taskPanelTitle.value;
+    let description = taskPanelDescription.value;
+    const currEle = document.querySelector(`#${currTaskId} > p`);
+    currEle.innerHTML = title;
+    updateTitleById(currTaskId,title);
+    updateDescriptionById(currTaskId,description);
+    currTaskId = undefined;
+    taskPanelBackground.style.display = 'none';
+})
