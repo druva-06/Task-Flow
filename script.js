@@ -15,8 +15,7 @@ const taskPanelSaveBtn = document.getElementsByClassName('task-panel-save-btn')[
 
 /* Store the unique tokens */
 const tokenList = new Set(); /* DB Related */
-/* Stote the task Details */
-const taskObjList = [] /* DB Related */
+
 /* Type of Tasks */
 const taskTypes = ['TODO','DOING','DONE']
 
@@ -63,15 +62,6 @@ async function createTaskObj(token,title,type){ /* DB Related */
     return taskObj
 }
 
-/* Changing the task type */
-function changeTaskType(token,type){ /* DB Related */
-    for(let i=0;i<taskObjList.length;i++){
-        if(taskObjList[i]['token'] === token){
-            taskObjList[i]['status'] = taskTypes[type];
-        }
-    }
-}
-
 /* Create card with the title */
 function createCard(title,type){
 
@@ -80,14 +70,6 @@ function createCard(title,type){
 
 
     let taskObj = createTaskObj(token,title,type); /* DB Related */
-
-    /* Removeable */
-    taskObjList.push({
-        description: '',
-        'status': taskTypes[type],
-        title: title,
-        token: token
-    })
 
     let cardDetails = document.createElement('div');
     cardDetails.className = 'card-details';
@@ -116,7 +98,7 @@ function dragableForTask(taskEle){
 
 /* Get Title By using Id */
 async function getTitleById(token){ /* DB Related */
-    let url = `http://localhost:8080/task/getTitleByToken?token=${token}`
+    let url = `http://localhost:8080/task/getTitle?token=${token}`
     let response = await fetch(url)
     let title = await response.json()
     console.log(title)
@@ -125,7 +107,7 @@ async function getTitleById(token){ /* DB Related */
 
 /* Get Descrpition By using Id */
 async function getDescriptionById(token){ /* DB Related */
-    let url = `http://localhost:8080/task/getDescriptionByToken?token=${token}`
+    let url = `http://localhost:8080/task/getDescription?token=${token}`
     let response = await fetch(url)
     let description = await response.json()
     console.log(description)
@@ -133,25 +115,58 @@ async function getDescriptionById(token){ /* DB Related */
 }
 
 /* Update Title By using Id */
-function updateTitleById(token,title){ /* DB Related */
-    for(let i = 0; i < taskObjList.length; i++){
-        if(taskObjList[i]['token'] == token){
-            taskObjList[i]['title'] = title;
-            break;
-        }
+async function updateTitleById(token,title){ /* DB Related */
+    let url = 'http://localhost:8080/task/updateTitle'
+    let taskObj = {
+        token: token,
+        title: title
     }
+    let response = await fetch(url,{
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskObj),
+    })
+    let msg = await response.json()
+    console.log(msg)
 }
 
 /* Update Description By using Id */
-function updateDescriptionById(token,description){ /* DB Related */
-    for(let i = 0; i < taskObjList.length; i++){
-        if(taskObjList[i]['token'] == token){
-            taskObjList[i]['description'] = description;
-            break;
-        }
+async function updateDescriptionById(token,description){ /* DB Related */
+    let url = 'http://localhost:8080/task/updateDescription'
+    let taskObj = {
+        token: token,
+        description: description
     }
+    let response = await fetch(url,{
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskObj),
+    })
+    let msg = await response.json()
+    console.log(msg)
 }
 
+/* Changing the task type */
+async function changeTaskType(token,type){ /* DB Related */
+    let url = 'http://localhost:8080/task/updateStatus'
+    let taskObj = {
+        token: token,
+        'status': taskTypes[type]
+    }
+    let response = await fetch(url,{
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskObj),
+    })
+    let msg = await response.json()
+    console.log(msg)
+}
 
 /* Card Click Event */
 function onCardClickEvent(taskEle){
