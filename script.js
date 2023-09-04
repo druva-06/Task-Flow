@@ -18,7 +18,7 @@ const tokenList = new Set(); /* DB Related */
 /* Stote the task Details */
 const taskObjList = [] /* DB Related */
 /* Type of Tasks */
-const taskTypes = ['todo','doing','done']
+const taskTypes = ['TODO','DOING','DONE']
 
 /* current task id */
 let currTaskId; 
@@ -43,20 +43,31 @@ function generateUniqueToken(sz){
 }
 
 /* Create the task object */
-function createTaskObj(token,title,type){
-    return {
-        'token': token,
-        'title': title,
-        'taskType': taskTypes[type],
-        'description': ''
+async function createTaskObj(token,title,type){ /* DB Related */
+    let url = 'http://localhost:8080/task/add'
+    let taskObj = {
+        description: '',
+        'status': taskTypes[type],
+        title: title,
+        token: token
     }
+    let response = await fetch(url,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskObj),
+    })
+    let msg = await response.json()
+    console.log(msg)
+    return taskObj
 }
 
 /* Changing the task type */
 function changeTaskType(token,type){ /* DB Related */
     for(let i=0;i<taskObjList.length;i++){
         if(taskObjList[i]['token'] === token){
-            taskObjList[i]['taskType'] = taskTypes[type];
+            taskObjList[i]['status'] = taskTypes[type];
         }
     }
 }
@@ -69,7 +80,14 @@ function createCard(title,type){
 
 
     let taskObj = createTaskObj(token,title,type); /* DB Related */
-    taskObjList.push(taskObj)
+
+    /* Removeable */
+    taskObjList.push({
+        description: '',
+        'status': taskTypes[type],
+        title: title,
+        token: token
+    })
 
     let cardDetails = document.createElement('div');
     cardDetails.className = 'card-details';
@@ -97,25 +115,25 @@ function dragableForTask(taskEle){
 }
 
 /* Get Title By using Id */
-function getTitleById(token){
-    for(let i = 0; i < taskObjList.length; i++){
-        if(taskObjList[i]['token']===token){
-            return taskObjList[i]['title'];
-        }
-    }
+async function getTitleById(token){ /* DB Related */
+    let url = `http://localhost:8080/task/getTitleByToken?token=${token}`
+    let response = await fetch(url)
+    let title = await response.json()
+    console.log(title)
+    return title['message'];
 }
 
 /* Get Descrpition By using Id */
-function getDescrpitionById(token){
-    for(let i = 0; i < taskObjList.length; i++){
-        if(taskObjList[i]['token']===token){
-            return taskObjList[i]['description'];
-        }
-    }
+async function getDescriptionById(token){ /* DB Related */
+    let url = `http://localhost:8080/task/getDescriptionByToken?token=${token}`
+    let response = await fetch(url)
+    let description = await response.json()
+    console.log(description)
+    return description['message'];
 }
 
 /* Update Title By using Id */
-function updateTitleById(token,title){
+function updateTitleById(token,title){ /* DB Related */
     for(let i = 0; i < taskObjList.length; i++){
         if(taskObjList[i]['token'] == token){
             taskObjList[i]['title'] = title;
@@ -125,7 +143,7 @@ function updateTitleById(token,title){
 }
 
 /* Update Description By using Id */
-function updateDescriptionById(token,description){
+function updateDescriptionById(token,description){ /* DB Related */
     for(let i = 0; i < taskObjList.length; i++){
         if(taskObjList[i]['token'] == token){
             taskObjList[i]['description'] = description;
@@ -137,11 +155,11 @@ function updateDescriptionById(token,description){
 
 /* Card Click Event */
 function onCardClickEvent(taskEle){
-    taskEle.addEventListener('click', (event) => {
+    taskEle.addEventListener('click',async (event) => {
         taskPanelBackground.style.display = 'flex';
         currTaskId = taskEle.id;
-        let title = getTitleById(currTaskId);
-        let description = getDescrpitionById(currTaskId);
+        let title = await getTitleById(currTaskId);
+        let description = await getDescriptionById(currTaskId);
         taskPanelTitle.value = title;
         taskPanelDescription.value = description;
     })
@@ -188,11 +206,13 @@ for(let i = 0; i < 3; i++){
 /* Task panel Background click Event */
 taskPanelBackground.addEventListener('click',(event) => {
     taskPanelBackground.style.display = 'none';
+    currTaskId = undefined;
 })
 
 /* Task panel cancel btn click Event */
 taskPanelcancelBtn.addEventListener('click',(event) => {
     taskPanelBackground.style.display = 'none';
+    currTaskId = undefined;
 })
 
 /* Task panel click Event */
