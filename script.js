@@ -12,6 +12,9 @@ const taskPanelcancelBtn = document.getElementsByClassName('task-panel-cancel-bt
 const taskPanelTitle = document.getElementsByClassName('task-panel-title')[0]
 const taskPanelDescription = document.getElementsByClassName('task-panel-description')[0]
 const taskPanelSaveBtn = document.getElementsByClassName('task-panel-save-btn')[0]
+const taskPanelDeleteBtn = document.getElementsByClassName('task-panel-delete-btn')[0]
+
+const baseUrl = 'https://troubled-spade-production.up.railway.app/'
 
 /* Store the unique tokens */
 const tokenList = new Set(); /* DB Related */
@@ -27,7 +30,12 @@ function generateToken(sz){
     const str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let token = '';
     for(let i = 0; i < sz; i++){
-        token += str.charAt(Math.random()*(str.length - 1));
+        if(i != 0){
+            token += str.charAt(Math.random()*(str.length - 1));
+        }
+        else{
+            token += str.charAt(Math.random()*(str.length - 11));
+        }
     }
     return token;
 }
@@ -43,7 +51,7 @@ function generateUniqueToken(sz){
 
 /* Create the task object */
 async function createTaskObj(token,title,type){ /* DB Related */
-    let url = 'http://localhost:8080/task/add'
+    let url = `${baseUrl}task/add`
     let taskObj = {
         description: '',
         'status': taskTypes[type],
@@ -96,9 +104,15 @@ function dragableForTask(taskEle){
     })
 }
 
+/* Remove the task Panel */
+function hideTaskPanel(){
+    taskPanelBackground.style.display = 'none';
+    currTaskId = undefined;
+}
+
 /* Get Title By using Id */
 async function getTitleById(token){ /* DB Related */
-    let url = `http://localhost:8080/task/getTitle?token=${token}`
+    let url = `${baseUrl}task/getTitle?token=${token}`
     let response = await fetch(url)
     let title = await response.json()
     console.log(title)
@@ -107,16 +121,26 @@ async function getTitleById(token){ /* DB Related */
 
 /* Get Descrpition By using Id */
 async function getDescriptionById(token){ /* DB Related */
-    let url = `http://localhost:8080/task/getDescription?token=${token}`
+    let url = `${baseUrl}task/getDescription?token=${token}`
     let response = await fetch(url)
     let description = await response.json()
     console.log(description)
     return description['message'];
 }
 
+/* Delete Task By using Id */
+async function deleteTaskById(token){
+    let url = `${baseUrl}task/deleteTask?token=${token}`
+    let response = await fetch(url,{
+        method:'DELETE'
+    })
+    let msg = await response.json();
+    return msg['message'];
+}
+
 /* Update Title By using Id */
 async function updateTitleById(token,title){ /* DB Related */
-    let url = 'http://localhost:8080/task/updateTitle'
+    let url = `${baseUrl}task/updateTitle`
     let taskObj = {
         token: token,
         title: title
@@ -134,7 +158,7 @@ async function updateTitleById(token,title){ /* DB Related */
 
 /* Update Description By using Id */
 async function updateDescriptionById(token,description){ /* DB Related */
-    let url = 'http://localhost:8080/task/updateDescription'
+    let url = `${baseUrl}task/updateDescription`
     let taskObj = {
         token: token,
         description: description
@@ -152,7 +176,7 @@ async function updateDescriptionById(token,description){ /* DB Related */
 
 /* Changing the task type */
 async function changeTaskType(token,type){ /* DB Related */
-    let url = 'http://localhost:8080/task/updateStatus'
+    let url = `${baseUrl}task/updateStatus`
     let taskObj = {
         token: token,
         'status': taskTypes[type]
@@ -218,21 +242,14 @@ for(let i = 0; i < 3; i++){
     })
 }
 
-/* Task panel Background click Event */
-taskPanelBackground.addEventListener('click',(event) => {
-    taskPanelBackground.style.display = 'none';
-    currTaskId = undefined;
-})
-
-/* Task panel cancel btn click Event */
-taskPanelcancelBtn.addEventListener('click',(event) => {
-    taskPanelBackground.style.display = 'none';
-    currTaskId = undefined;
-})
-
 /* Task panel click Event */
 taskPanel.addEventListener('click',(event) => {
     event.stopPropagation();
+})
+
+/* Task panel Background click Event */
+taskPanelBackground.addEventListener('click',(event) => {
+    hideTaskPanel();
 })
 
 /* Task panel save Btn */
@@ -243,6 +260,17 @@ taskPanelSaveBtn.addEventListener('click',(event) => {
     currEle.innerHTML = title;
     updateTitleById(currTaskId,title);
     updateDescriptionById(currTaskId,description);
-    currTaskId = undefined;
-    taskPanelBackground.style.display = 'none';
+    hideTaskPanel();
+})
+
+/* Task panel cancel btn click Event */
+taskPanelcancelBtn.addEventListener('click',(event) => {
+    hideTaskPanel();
+})
+
+taskPanelDeleteBtn.addEventListener('click',(event)=>{
+    const currEle = document.querySelector(`#${currTaskId}`);
+    currEle.remove();
+    deleteTaskById(currTaskId);
+    hideTaskPanel();
 })

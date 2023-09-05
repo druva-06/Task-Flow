@@ -218,3 +218,10 @@ main > .task-panel-background{
     border-radius: 10px;
     cursor: pointer;
 }
+
+.task-panel-save-and-cancel .task-panel-delete-btn{
+    background-color: #a71a2d;
+    padding: 10px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+}
