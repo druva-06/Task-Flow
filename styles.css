@@ -56,7 +56,7 @@ main .material-symbols-outlined{
     flex-direction: column;
     max-height: 50vh;
     padding-right: 10px;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .task-container .card-details{

@@ -15,12 +15,18 @@ const taskPanelSaveBtn = document.getElementsByClassName('task-panel-save-btn')[
 const taskPanelDeleteBtn = document.getElementsByClassName('task-panel-delete-btn')[0]
 
 const baseUrl = 'https://troubled-spade-production.up.railway.app/'
+//const baseUrl = 'http://localhost:8080/'
 
 /* Store the unique tokens */
 const tokenList = new Set(); /* DB Related */
 
 /* Type of Tasks */
 const taskTypes = ['TODO','DOING','DONE']
+const taskTypesMap = {
+    'TODO':0,
+    'DOING':1,
+    'DONE':2
+}
 
 /* current task id */
 let currTaskId; 
@@ -54,7 +60,7 @@ async function createTaskObj(token,title,type){ /* DB Related */
     let url = `${baseUrl}task/add`
     let taskObj = {
         description: '',
-        'status': taskTypes[type],
+        'status': type,
         title: title,
         token: token
     }
@@ -71,13 +77,13 @@ async function createTaskObj(token,title,type){ /* DB Related */
 }
 
 /* Create card with the title */
-function createCard(title,type){
+function createCard(title, type, token){
 
-    let token = generateUniqueToken(10); /* DB Related */
-    tokenList.add(token)
-
-
-    let taskObj = createTaskObj(token,title,type); /* DB Related */
+    if(token==undefined){
+        let token = generateUniqueToken(10); /* DB Related */
+        tokenList.add(token)
+        let taskObj = createTaskObj(token,title,type); /* DB Related */
+    }
 
     let cardDetails = document.createElement('div');
     cardDetails.className = 'card-details';
@@ -192,6 +198,13 @@ async function changeTaskType(token,type){ /* DB Related */
     console.log(msg)
 }
 
+async function loadData(){
+    let url = `${baseUrl}task/allTasks`
+    let response = await fetch(url)
+    let taskList = await response.json();
+    return taskList
+}
+
 /* Card Click Event */
 function onCardClickEvent(taskEle){
     taskEle.addEventListener('click',async (event) => {
@@ -215,7 +228,7 @@ for(let i = 0; i < 3; i++){
     addTitleBtns[i].addEventListener('click',(event) => {
         const title = cardTitles[i].value.trim();
         if(title!=='' && title!=undefined){
-            taskEle = createCard(title,i);
+            taskEle = createCard(title,taskTypes[i]);
             dragableForTask(taskEle)
             onCardClickEvent(taskEle)
             cardContainers[i].appendChild(taskEle);
@@ -268,9 +281,21 @@ taskPanelcancelBtn.addEventListener('click',(event) => {
     hideTaskPanel();
 })
 
+/* Task panel delete btn click Event */
 taskPanelDeleteBtn.addEventListener('click',(event)=>{
     const currEle = document.querySelector(`#${currTaskId}`);
     currEle.remove();
     deleteTaskById(currTaskId);
     hideTaskPanel();
 })
+
+window.onload = async(event) => {
+    let taskList = await loadData()
+    console.log(taskList)
+    taskList.forEach(element => {
+        taskEle = createCard(element.title,element.status,element.token);
+        dragableForTask(taskEle)
+        onCardClickEvent(taskEle)
+        cardContainers[taskTypesMap[element.status]].appendChild(taskEle);
+    });
+}
