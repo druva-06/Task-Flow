@@ -12,9 +12,69 @@ body{
    /* background-image: url(bgImg.jpeg); */
 }
 
-header{
-    text-align: center;
-    padding: 20px;
+header > .nav-bar{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0px;
+    background-color: rgba(0, 0, 0, 0.24);
+}
+
+.nav-bar > .left-nav-bar{
+    display: flex;
+    gap: 20px;
+    padding-left: 20px;
+    align-items: center;
+}
+
+.left-nav-bar > .heading-txt{
+    font-size: 20px;
+}
+
+.nav-bar > .left-nav-bar > *{
+    cursor: pointer;
+}
+
+.left-nav-bar > .board-btn{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.board-btn > *{
+    color: black;
+}
+
+.nav-bar > .right-nav-bar{
+    display: flex;
+    gap: 20px;
+    padding-right: 20px;
+    align-items: center;
+}
+
+.nav-bar > .right-nav-bar > *{
+    cursor: pointer;
+}
+
+.right-nav-bar > .filter-btn{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.right-nav-bar > .share-btn{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.share-btn > *{
+    color: black;
 }
 
 main > .task-container{
