@@ -21,6 +21,7 @@ const frontendUrl = 'https://druva-06.github.io/Task-Flow-Frontend'
 
 
 signUpPanel.style.display = 'none'
+signInPanel.style.display = 'flex'
 
 window.onload = () => {
     if(localStorage.getItem('emailId')){

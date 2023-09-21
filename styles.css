@@ -77,6 +77,19 @@ header > .nav-bar{
     color: black;
 }
 
+.right-nav-bar > .logout-btn{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.logout-btn > *{
+    color: black;
+}
+
 main > .task-container{
     position: relative;
     display: flex;

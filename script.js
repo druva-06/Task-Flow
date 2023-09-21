@@ -14,9 +14,14 @@ const taskPanelTitle = document.getElementsByClassName('task-panel-title')[0]
 const taskPanelDescription = document.getElementsByClassName('task-panel-description')[0]
 const taskPanelSaveBtn = document.getElementsByClassName('task-panel-save-btn')[0]
 const taskPanelDeleteBtn = document.getElementsByClassName('task-panel-delete-btn')[0]
+const logoutBtn = document.getElementsByClassName('logout-btn')[0]
 
-//const baseUrl = 'https://troubled-spade-production.up.railway.app/'
-const baseUrl = 'http://localhost:8080/'
+const baseUrl = 'https://troubled-spade-production.up.railway.app/'
+//const baseUrl = 'http://localhost:8080/'
+
+const frontendUrl = 'https://druva-06.github.io/Task-Flow-Frontend'
+//const frontendUrl = 'http://127.0.0.1:5500'
+
 
 /* Store the unique tokens */
 const tokenList = new Set(); /* DB Related */
@@ -289,6 +294,13 @@ taskPanelDeleteBtn.addEventListener('click',(event)=>{
     hideTaskPanel();
 })
 
+/* Logout Button click event */
+logoutBtn.addEventListener('click',() => {
+    localStorage.removeItem('emailId');
+    window.open(`${frontendUrl}/index.html`,'_self')
+})
+
+/* On Load Function */
 window.onload = async(event) => {
     let taskList = await loadData(localStorage.getItem('emailId'))
     taskList.forEach(element => {
