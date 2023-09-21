@@ -1,0 +1,120 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+main{
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-image: url(./images/login-background.jpeg);
+}
+
+main > *{
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 40px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.header{
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.password-panel{
+    margin-top: -5px;
+}
+
+.conf-password-panel{
+    margin-top: -5px;
+}
+
+.input-heading{
+    font-size: 12px;
+    font-weight: 700;
+    color: rgb(61, 60, 60);
+}
+
+input{
+    margin-top: 5px;
+    background: rgba(156, 156, 228, 0.371);
+    outline: none;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.forget-password{
+    align-self: flex-end;
+    margin: -12px 0px;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgb(54, 99, 189);
+    cursor: pointer;
+}
+
+.login-btn{
+    width: 300px;
+    background-color: blue;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.signup-btn{
+    width: 300px;
+    background-color: blue;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.sign-up{
+    align-self: center;
+    margin-top: -12px;
+}
+
+.sign-up > *{
+    color: gray;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sign-up > .signup-txt{
+    color: rgba(255, 0, 0, 0.887);
+    cursor: pointer;
+}
+
+.sign-in{
+    align-self: center;
+    margin-top: -12px;
+}
+
+.sign-in > *{
+    color: gray;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sign-in > .signin-txt{
+    color: rgba(255, 0, 0, 0.887);
+    cursor: pointer;
+}
+
+.error-msg{
+    align-self: center;
+    color: red;
+    font-weight: 600;
+}

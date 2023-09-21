@@ -6,6 +6,7 @@ const cardTitles = document.getElementsByClassName('card-title');
 const cancelBtn = document.getElementsByClassName('cancel-btn');
 const cardContainers = document.getElementsByClassName('card-container');
 const taskContainers = document.getElementsByClassName('assignment')
+const statusMoreBtn = document.getElementsByClassName('status-more-btn')
 const taskPanelBackground = document.getElementsByClassName('task-panel-background')[0]
 const taskPanel = document.getElementsByClassName('task-panel')[0]
 const taskPanelcancelBtn = document.getElementsByClassName('task-panel-cancel-btn')[0]
@@ -14,8 +15,8 @@ const taskPanelDescription = document.getElementsByClassName('task-panel-descrip
 const taskPanelSaveBtn = document.getElementsByClassName('task-panel-save-btn')[0]
 const taskPanelDeleteBtn = document.getElementsByClassName('task-panel-delete-btn')[0]
 
-const baseUrl = 'https://troubled-spade-production.up.railway.app/'
-//const baseUrl = 'http://localhost:8080/'
+//const baseUrl = 'https://troubled-spade-production.up.railway.app/'
+const baseUrl = 'http://localhost:8080/'
 
 /* Store the unique tokens */
 const tokenList = new Set(); /* DB Related */
@@ -62,7 +63,8 @@ async function createTaskObj(token,title,type){ /* DB Related */
         description: '',
         'status': type,
         title: title,
-        token: token
+        token: token,
+        'emailId':localStorage.getItem('emailId')
     }
     let response = await fetch(url,{
         method: 'POST',
@@ -72,7 +74,6 @@ async function createTaskObj(token,title,type){ /* DB Related */
         body: JSON.stringify(taskObj),
     })
     let msg = await response.json()
-    console.log(msg)
     return taskObj
 }
 
@@ -121,7 +122,6 @@ async function getTitleById(token){ /* DB Related */
     let url = `${baseUrl}task/getTitle?token=${token}`
     let response = await fetch(url)
     let title = await response.json()
-    console.log(title)
     return title['message'];
 }
 
@@ -130,7 +130,6 @@ async function getDescriptionById(token){ /* DB Related */
     let url = `${baseUrl}task/getDescription?token=${token}`
     let response = await fetch(url)
     let description = await response.json()
-    console.log(description)
     return description['message'];
 }
 
@@ -159,7 +158,6 @@ async function updateTitleById(token,title){ /* DB Related */
         body: JSON.stringify(taskObj),
     })
     let msg = await response.json()
-    console.log(msg)
 }
 
 /* Update Description By using Id */
@@ -177,7 +175,6 @@ async function updateDescriptionById(token,description){ /* DB Related */
         body: JSON.stringify(taskObj),
     })
     let msg = await response.json()
-    console.log(msg)
 }
 
 /* Changing the task type */
@@ -195,11 +192,10 @@ async function changeTaskType(token,type){ /* DB Related */
         body: JSON.stringify(taskObj),
     })
     let msg = await response.json()
-    console.log(msg)
 }
 
-async function loadData(){
-    let url = `${baseUrl}task/allTasks`
+async function loadData(emailId){
+    let url = `${baseUrl}task/allTasks?emailId=${emailId}`
     let response = await fetch(url)
     let taskList = await response.json();
     return taskList
@@ -234,6 +230,10 @@ for(let i = 0; i < 3; i++){
             cardContainers[i].appendChild(taskEle);
         }
         cardTitles[i].value = '';
+    })
+    /* More Btn for status click listener */
+    statusMoreBtn[i].addEventListener('click', () => {
+        console.log(taskTypes[i])
     })
     /* On Clicking the cancel btn */
     cancelBtn[i].addEventListener('click', (event) => {
@@ -290,8 +290,7 @@ taskPanelDeleteBtn.addEventListener('click',(event)=>{
 })
 
 window.onload = async(event) => {
-    let taskList = await loadData()
-    console.log(taskList)
+    let taskList = await loadData(localStorage.getItem('emailId'))
     taskList.forEach(element => {
         taskEle = createCard(element.title,element.status,element.token);
         dragableForTask(taskEle)
