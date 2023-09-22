@@ -37,28 +37,11 @@ const taskTypesMap = {
 /* current task id */
 let currTaskId; 
 
-/* Generate the token with size sz */
-function generateToken(sz){
-    const str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let token = '';
-    for(let i = 0; i < sz; i++){
-        if(i != 0){
-            token += str.charAt(Math.random()*(str.length - 1));
-        }
-        else{
-            token += str.charAt(Math.random()*(str.length - 11));
-        }
-    }
-    return token;
-}
-
-/* Generate the unique token with size sz */
-function generateUniqueToken(sz){
-    let token = generateToken(sz);
-    while(tokenList.has(token)){
-        token = generateToken(sz);
-    }
-    return token;
+/* Generate the token */
+async function generateToken(){
+    const response = await fetch(`${baseUrl}task/token`)
+    const {message} = await response.json()
+    return message;
 }
 
 /* Create the task object */
@@ -83,12 +66,11 @@ async function createTaskObj(token,title,type){ /* DB Related */
 }
 
 /* Create card with the title */
-function createCard(title, type, token){
+async function createCard(title, type, token){
 
-    if(token==undefined){
-        let token = generateUniqueToken(10); /* DB Related */
-        tokenList.add(token)
-        let taskObj = createTaskObj(token,title,type); /* DB Related */
+    if(token===undefined){
+        token = await generateToken()
+        let taskObj = await createTaskObj(token,title,type); /* DB Related */
     }
 
     let cardDetails = document.createElement('div');
@@ -226,10 +208,10 @@ for(let i = 0; i < 3; i++){
         addACardBtns[i].style.display = 'none';
     })
     /* Add the task to the type of work */
-    addTitleBtns[i].addEventListener('click',(event) => {
+    addTitleBtns[i].addEventListener('click',async(event) => {
         const title = cardTitles[i].value.trim();
         if(title!=='' && title!=undefined){
-            taskEle = createCard(title,taskTypes[i]);
+            taskEle = await createCard(title,taskTypes[i]);
             dragableForTask(taskEle)
             onCardClickEvent(taskEle)
             cardContainers[i].appendChild(taskEle);
@@ -303,8 +285,8 @@ logoutBtn.addEventListener('click',() => {
 /* On Load Function */
 window.onload = async(event) => {
     let taskList = await loadData(localStorage.getItem('emailId'))
-    taskList.forEach(element => {
-        taskEle = createCard(element.title,element.status,element.token);
+    taskList.forEach(async(element) => {
+        taskEle = await createCard(element.title,element.status,element.token);
         dragableForTask(taskEle)
         onCardClickEvent(taskEle)
         cardContainers[taskTypesMap[element.status]].appendChild(taskEle);
